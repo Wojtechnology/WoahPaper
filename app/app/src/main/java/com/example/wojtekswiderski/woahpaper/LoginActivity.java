@@ -105,6 +105,7 @@ public class LoginActivity extends Activity {
 
         layout.addView(spaces[spaceCounter++]);
 
+        //Submit button for the app
         final Button submit = new Button(this);
         submit.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 200));
         submit.setBackgroundColor(0xFF33B5E5);
