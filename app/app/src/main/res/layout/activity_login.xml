@@ -1,11 +1,41 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView style="@style/AppTheme"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context=".LoginActivity">
-
-</RelativeLayout>
+    tools:context=".LoginActivity"
+    android:background="#99CC00">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TextView
+            style="@style/BlockTheme"
+            android:text="@string/header_name"
+            android:background="#FFBB33"/>
+        <TextView
+            style="@style/SpacerTheme"
+            android:background="#FF8800"/>
+        <EditText
+            style="@style/FormTheme"
+            android:hint="@string/username_hint"
+            android:background="#FF4444"/>
+        <TextView
+            style="@style/SpacerTheme"
+            android:background="#CC0000"/>
+        <EditText
+            style="@style/FormTheme"
+            android:hint="@string/password_hint"
+            android:background="#FF4444"/>
+        <TextView
+            style="@style/SpacerTheme"
+            android:background="#CC0000"/>
+        <Button
+            style="@style/BlockTheme"
+            android:text="@string/submit_button"
+            android:background="#33B5E5"/>
+        <TextView
+            style="@style/SpacerTheme"
+            android:background="#0099CC"/>
+    </LinearLayout>
+</ScrollView>

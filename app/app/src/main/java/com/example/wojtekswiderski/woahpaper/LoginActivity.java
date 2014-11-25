@@ -1,13 +1,10 @@
 package com.example.wojtekswiderski.woahpaper;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
-import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
 import android.view.Gravity;
 import android.view.Menu;
@@ -18,22 +15,20 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 public class LoginActivity extends Activity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle extra) {
+        super.onCreate(extra);
         setContentView(R.layout.activity_login);
 
-        ScrollView scroller = new ScrollView(this);
+        /*ScrollView scroller = new ScrollView(this);
 
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-        //layout.setPadding(10,10,10,10);
 
         //Creating objects to use as spaces in between tiles
         int spaceCounter = 0;
@@ -121,10 +116,9 @@ public class LoginActivity extends Activity {
         scroller.addView(layout);
 
         View root = layout.getRootView();
-        root.setBackgroundColor(0xFF99CC00);
+        root.setBackgroundColor(0xFF99CC00);*/
 
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -3,5 +3,9 @@
 
     <string name="app_name">WoahPaper</string>
     <string name="action_settings">Settings</string>
+    <string name="header_name">WOAHPAPER</string>
+    <string name="username_hint">USERNAME</string>
+    <string name="password_hint">PASSWORD</string>
+    <string name="submit_button">SIGN IN / REGISTER</string>
 
 </resources>

@@ -1,8 +1,31 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="@android:style/Theme.NoTitleBar">
-        <!-- Customize your theme here. -->
+    <style name="AppTheme" parent="@android:style/Theme.NoTitleBar"></style>
+
+    <!-- Theme for blocks in the app. -->
+    <style name="BlockTheme">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/block_vertical_dim</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">@dimen/text_size</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="FormTheme">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/block_vertical_dim</item>
+        <item name="android:textColorHint">#FFFFFF</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">@dimen/text_size</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Theme for spacers. -->
+    <style name="SpacerTheme">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/spacer_vertical_dim</item>
     </style>
 
 </resources>
