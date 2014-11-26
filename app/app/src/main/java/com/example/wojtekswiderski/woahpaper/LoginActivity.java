@@ -1,29 +1,23 @@
 package com.example.wojtekswiderski.woahpaper;
 
 import android.app.Activity;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.InputFilter;
-import android.text.InputType;
-import android.text.method.PasswordTransformationMethod;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.CompletionInfo;
-import android.view.inputmethod.CorrectionInfo;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.ExtractedText;
-import android.view.inputmethod.ExtractedTextRequest;
-import android.view.inputmethod.InputConnection;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
+import android.os.StrictMode;
 import android.os.Handler;
+import android.widget.Toast;
+import android.view.inputmethod.InputMethodManager;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class LoginActivity extends Activity {
 
@@ -32,9 +26,12 @@ public class LoginActivity extends Activity {
         super.onCreate(extra);
         setContentView(R.layout.activity_login);
 
-        EditText userInput = (EditText) findViewById(R.id.userBox);
-        EditText passInput = (EditText) findViewById(R.id.passBox);
-        Button submitButton = (Button) findViewById(R.id.submitBox);
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        final EditText userInput = (EditText) findViewById(R.id.userBox);
+        final EditText passInput = (EditText) findViewById(R.id.passBox);
+        final Button submitButton = (Button) findViewById(R.id.submitBox);
 
         //Caps the input
         InputFilter[] userFilterArray = new InputFilter[2];
@@ -63,6 +60,11 @@ public class LoginActivity extends Activity {
             @Override
             public void onClick(final View view) {
                 view.setBackgroundColor(0xFF0099CC);
+                InputMethodManager inputManager = (InputMethodManager)
+                        getSystemService(view.getContext().INPUT_METHOD_SERVICE);
+
+                inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+                        InputMethodManager.HIDE_NOT_ALWAYS);
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
@@ -70,6 +72,31 @@ public class LoginActivity extends Activity {
                         view.setBackgroundColor(0xFF33B5E5);
                     }
                 }, 200);
+                String user = userInput.getText().toString().toLowerCase();
+                String pass = passInput.getText().toString();
+                String url = "http://woahpaper.wojtechnology.com/user/" + user + "/" + pass;
+                try {
+                    URL obj = new URL(url);
+                    HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+                    con.setRequestMethod("GET");
+
+                    BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                    String inputLine;
+                    StringBuffer response = new StringBuffer();
+
+                    while ((inputLine = in.readLine()) != null) {
+                        response.append(inputLine);
+                    }
+                    in.close();
+
+                    Toast.makeText(view.getContext(), response, Toast.LENGTH_SHORT).show();
+
+                } catch (MalformedURLException ex) {
+                    ex.printStackTrace();
+                } catch (IOException ey){
+                    ey.printStackTrace();
+                }
             }
         });
 
