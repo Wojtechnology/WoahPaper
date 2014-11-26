@@ -23,7 +23,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-
+import android.os.Handler;
 
 public class LoginActivity extends Activity {
 
@@ -34,6 +34,7 @@ public class LoginActivity extends Activity {
 
         EditText userInput = (EditText) findViewById(R.id.userBox);
         EditText passInput = (EditText) findViewById(R.id.passBox);
+        Button submitButton = (Button) findViewById(R.id.submitBox);
 
         //Caps the input
         InputFilter[] userFilterArray = new InputFilter[2];
@@ -55,6 +56,20 @@ public class LoginActivity extends Activity {
             public void onFocusChange(View view, boolean b) {
                 if(((EditText) view).getHint().equals("")) ((EditText) view).setHint(R.string.password_hint);
                 else ((EditText) view).setHint("");
+            }
+        });
+
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                view.setBackgroundColor(0xFF0099CC);
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        view.setBackgroundColor(0xFF33B5E5);
+                    }
+                }, 200);
             }
         });
 
