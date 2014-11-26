@@ -3,6 +3,6 @@
     <dimen name="activity_horizontal_margin">0dp</dimen>
     <dimen name="activity_vertical_margin">0dp</dimen>
     <dimen name="block_vertical_dim">200px</dimen>
-    <dimen name="text_size">50px</dimen>
+    <dimen name="text_size">60px</dimen>
     <dimen name="spacer_vertical_dim">10px</dimen>
 </resources>

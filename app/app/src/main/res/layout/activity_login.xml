@@ -40,7 +40,7 @@
             style="@style/SpacerTheme"
             android:background="#CC0000"/>
         <Button
-            style="@style/BlockTheme"
+            style="@style/ButtonTheme"
             android:text="@string/submit_button"
             android:background="#33B5E5"
             android:id="@+id/submitBox"/>
