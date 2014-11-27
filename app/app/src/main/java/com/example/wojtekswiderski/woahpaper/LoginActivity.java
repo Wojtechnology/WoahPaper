@@ -11,6 +11,8 @@ import android.widget.EditText;
 import android.os.StrictMode;
 import android.os.Handler;
 import android.widget.Toast;
+import android.content.Intent;
+import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -90,12 +92,24 @@ public class LoginActivity extends Activity {
                     }
                     in.close();
 
-                    Toast.makeText(view.getContext(), response, Toast.LENGTH_SHORT).show();
+                    if(response.toString().equals("correct password")){
+                        loginAction(view, user);
+                        finish();
+                    }else if(response.toString().equals("incorrect password")){
+                        Toast.makeText(view.getContext(), "Wrong Password", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(view.getContext(), "Created User", Toast.LENGTH_SHORT).show();
+                        loginAction(view, user);
+                        finish();
+                    }
+
 
                 } catch (MalformedURLException ex) {
                     ex.printStackTrace();
+                    Toast.makeText(view.getContext(), "Wrong URL", Toast.LENGTH_SHORT).show();
                 } catch (IOException ey){
                     ey.printStackTrace();
+                    Toast.makeText(view.getContext(), "Server Down", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -140,6 +154,18 @@ public class LoginActivity extends Activity {
         passWord.setTextColor(0xFFFFFFFF);
         layout.addView(passWord);*/
 
+    }
+
+    public void loginAction(View view, String user){
+        try{
+            Intent i = new Intent(this, SendActivity.class);
+            i.putExtra("user", user);
+            startActivity(i);
+        }
+        catch(Exception ex)
+        {
+            Log.e("main",ex.toString());
+        }
     }
 
     @Override

@@ -1,9 +1,11 @@
 package com.example.wojtekswiderski.woahpaper;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 
 public class SendActivity extends Activity {
@@ -12,6 +14,13 @@ public class SendActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send);
+
+        Intent pastIntent = getIntent();
+        String userName = pastIntent.getStringExtra("user");
+
+        TextView userTitle = (TextView) findViewById(R.id.userTitleBox);
+
+        userTitle.setText("HELLO " + userName.toUpperCase());
     }
 
 
