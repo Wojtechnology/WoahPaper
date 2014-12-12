@@ -3,8 +3,11 @@ package com.example.wojtekswiderski.woahpaper;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 
@@ -15,10 +18,22 @@ public class SendActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send);
 
+        //Gets info from home page
         Intent pastIntent = getIntent();
         String userName = pastIntent.getStringExtra("user");
 
-        TextView userTitle = (TextView) findViewById(R.id.userTitleBox);
+
+        final TextView userTitle = (TextView) findViewById(R.id.userTitleBox);
+        final EditText recipInput = (EditText) findViewById(R.id.recipientBox);
+        final EditText wordInput = (EditText) findViewById(R.id.wordBox);
+        final Button sendButton = (Button) findViewById(R.id.sendButton);
+
+        //Caps the input
+        InputFilter[] userFilterArray = new InputFilter[2];
+        userFilterArray[0] = new InputFilter.AllCaps();
+        userFilterArray[1] = new InputFilter.LengthFilter(12);
+        recipInput.setFilters(userFilterArray);
+        wordInput.setFilters(userFilterArray);
 
         userTitle.setText("HELLO " + userName.toUpperCase());
     }

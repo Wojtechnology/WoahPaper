@@ -28,9 +28,11 @@ public class LoginActivity extends Activity {
         super.onCreate(extra);
         setContentView(R.layout.activity_login);
 
+        //Enabling internet access for the app
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
+        //Creates objects for forms and button
         final EditText userInput = (EditText) findViewById(R.id.userBox);
         final EditText passInput = (EditText) findViewById(R.id.passBox);
         final Button submitButton = (Button) findViewById(R.id.submitBox);
@@ -41,6 +43,7 @@ public class LoginActivity extends Activity {
         userFilterArray[1] = new InputFilter.LengthFilter(12);
         userInput.setFilters(userFilterArray);
 
+        //Turns off hint when clicked
         userInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
@@ -113,46 +116,6 @@ public class LoginActivity extends Activity {
                 }
             }
         });
-
-        /*//Filters for the inputs allowing usernames up to 12 letters
-        //Also caps the input
-        InputFilter[] userFilterArray = new InputFilter[2];
-        userFilterArray[0] = new InputFilter.LengthFilter(12);
-        userFilterArray[1] = new InputFilter.AllCaps();
-
-        InputFilter[] passFilterArray = new InputFilter[2];
-        passFilterArray[0] = new InputFilter.LengthFilter(4);
-        passFilterArray[1] = new InputFilter.AllCaps();
-
-        //Input for the username
-        final EditText userName = new EditText(this);
-        userName.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 200));
-        userName.setBackgroundColor(0xFFFF4444);
-        userName.setTypeface(Typeface.create("", Typeface.BOLD));
-        userName.setFilters(userFilterArray);
-        userName.setHint("USERNAME");
-        userName.setHintTextColor(0xFFFFFFFF);
-        userName.setGravity(Gravity.CENTER);
-        userName.setTextSize(50f);
-        userName.setCursorVisible(false);
-        userName.setTextColor(0xFFFFFFFF);
-        layout.addView(userName);
-
-        //password field
-        final EditText passWord = new EditText(this);
-        passWord.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 200));
-        passWord.setBackgroundColor(0xFFFF4444);
-        passWord.setTypeface(Typeface.create("", Typeface.BOLD));
-        passWord.setFilters(passFilterArray);
-        passWord.setHint("PASSWORD");
-        passWord.setInputType(InputType.TYPE_CLASS_NUMBER);
-        passWord.setTransformationMethod(PasswordTransformationMethod.getInstance());
-        passWord.setHintTextColor(0xFFFFFFFF);
-        passWord.setGravity(Gravity.CENTER);
-        passWord.setTextSize(50f);
-        passWord.setCursorVisible(false);
-        passWord.setTextColor(0xFFFFFFFF);
-        layout.addView(passWord);*/
 
     }
 

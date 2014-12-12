@@ -11,6 +11,7 @@
         <item name="android:gravity">center</item>
         <item name="android:textSize">@dimen/text_size</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">sans-serif</item>
     </style>
 
     <style name="ButtonTheme">
@@ -20,6 +21,7 @@
         <item name="android:gravity">center</item>
         <item name="android:textSize">@dimen/text_size</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">sans-serif</item>
     </style>
 
     <style name="FormTheme">
@@ -29,6 +31,7 @@
         <item name="android:gravity">center</item>
         <item name="android:textSize">@dimen/text_size</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">sans-serif</item>
         <item name="android:textColor">#FFFFFF</item>
         <item name="android:imeOptions">flagNoExtractUi</item>
     </style>
