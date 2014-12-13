@@ -3,6 +3,7 @@ package com.example.wojtekswiderski.woahpaper;
 import android.app.Activity;
 import android.os.Bundle;
 import android.text.InputFilter;
+import android.text.Spanned;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -10,7 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.os.StrictMode;
-import android.os.Handler;
 import android.widget.Toast;
 import android.content.Intent;
 import android.util.Log;
@@ -39,9 +39,20 @@ public class LoginActivity extends Activity {
         final Button submitButton = (Button) findViewById(R.id.submitBox);
 
         //Caps the input
-        InputFilter[] userFilterArray = new InputFilter[2];
+        InputFilter[] userFilterArray = new InputFilter[3];
         userFilterArray[0] = new InputFilter.AllCaps();
         userFilterArray[1] = new InputFilter.LengthFilter(12);
+        userFilterArray[2] = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                for (int i = start; i < end; i++) {
+                    if (!Character.isLetterOrDigit(source.charAt(i))) {
+                        return "";
+                    }
+                }
+                return null;
+            }
+        };
         userInput.setFilters(userFilterArray);
 
         //Turns off hint when clicked
