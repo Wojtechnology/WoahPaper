@@ -39,7 +39,7 @@
         <Button
             style="@style/ButtonTheme"
             android:text="@string/send_botton"
-            android:background="#33B5E5"
+            android:background="@drawable/buttonblue"
             android:id="@+id/sendButton"/>
         <TextView
             style="@style/SpacerTheme"

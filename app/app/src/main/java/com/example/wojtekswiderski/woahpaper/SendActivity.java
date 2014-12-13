@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.text.InputFilter;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -22,11 +24,14 @@ public class SendActivity extends Activity {
         Intent pastIntent = getIntent();
         String userName = pastIntent.getStringExtra("user");
 
-
+        //Objects for areas on the app
         final TextView userTitle = (TextView) findViewById(R.id.userTitleBox);
         final EditText recipInput = (EditText) findViewById(R.id.recipientBox);
         final EditText wordInput = (EditText) findViewById(R.id.wordBox);
         final Button sendButton = (Button) findViewById(R.id.sendButton);
+
+        //Sets title to username
+        userTitle.setText("HELLO " + userName.toUpperCase());
 
         //Caps the input
         InputFilter[] userFilterArray = new InputFilter[2];
@@ -35,7 +40,33 @@ public class SendActivity extends Activity {
         recipInput.setFilters(userFilterArray);
         wordInput.setFilters(userFilterArray);
 
-        userTitle.setText("HELLO " + userName.toUpperCase());
+        //Turns off hint when clicked
+        recipInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if (((EditText) view).getHint().equals(""))
+                    ((EditText) view).setHint(R.string.recipient_hint);
+                else ((EditText) view).setHint("");
+            }
+        });
+
+        wordInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if (((EditText) view).getHint().equals(""))
+                    ((EditText) view).setHint(R.string.word_hint);
+                else ((EditText) view).setHint("");
+            }
+        });
+
+        //Button press
+        sendButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return false;
+            }
+        });
+
     }
 
 

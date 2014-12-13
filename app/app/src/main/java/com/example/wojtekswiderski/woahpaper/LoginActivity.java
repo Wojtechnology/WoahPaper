@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.InputFilter;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -61,22 +62,14 @@ public class LoginActivity extends Activity {
             }
         });
 
-        submitButton.setOnClickListener(new View.OnClickListener() {
+        submitButton.setOnTouchListener(new View.OnTouchListener(){
             @Override
-            public void onClick(final View view) {
-                view.setBackgroundColor(0xFF0099CC);
+            public boolean onTouch(final View view, MotionEvent motionEvent) {
                 InputMethodManager inputManager = (InputMethodManager)
                         getSystemService(view.getContext().INPUT_METHOD_SERVICE);
 
                 inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
                         InputMethodManager.HIDE_NOT_ALWAYS);
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        view.setBackgroundColor(0xFF33B5E5);
-                    }
-                }, 200);
                 String user = userInput.getText().toString().toLowerCase();
                 String pass = passInput.getText().toString();
                 String url = "http://woahpaper.wojtechnology.com/user/" + user + "/" + pass;
@@ -95,12 +88,12 @@ public class LoginActivity extends Activity {
                     }
                     in.close();
 
-                    if(response.toString().equals("correct password")){
+                    if (response.toString().equals("correct password")) {
                         loginAction(view, user);
                         finish();
-                    }else if(response.toString().equals("incorrect password")){
+                    } else if (response.toString().equals("incorrect password")) {
                         Toast.makeText(view.getContext(), "Wrong Password", Toast.LENGTH_SHORT).show();
-                    }else{
+                    } else {
                         Toast.makeText(view.getContext(), "Created User", Toast.LENGTH_SHORT).show();
                         loginAction(view, user);
                         finish();
@@ -110,10 +103,11 @@ public class LoginActivity extends Activity {
                 } catch (MalformedURLException ex) {
                     ex.printStackTrace();
                     Toast.makeText(view.getContext(), "Wrong URL", Toast.LENGTH_SHORT).show();
-                } catch (IOException ey){
+                } catch (IOException ey) {
                     ey.printStackTrace();
                     Toast.makeText(view.getContext(), "Server Down", Toast.LENGTH_SHORT).show();
                 }
+                return false;
             }
         });
 
