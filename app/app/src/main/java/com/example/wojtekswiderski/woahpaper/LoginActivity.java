@@ -1,6 +1,7 @@
 package com.example.wojtekswiderski.woahpaper;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.Spanned;
@@ -24,19 +25,27 @@ import java.net.URL;
 
 public class LoginActivity extends Activity {
 
+    private EditText userInput;
+    private EditText passInput;
+    private Button submitButton;
+
+    private Context context;
+
     @Override
     protected void onCreate(Bundle extra) {
         super.onCreate(extra);
         setContentView(R.layout.activity_login);
+
+        context = getApplicationContext();
 
         //Enabling internet access for the app
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
         //Creates objects for forms and button
-        final EditText userInput = (EditText) findViewById(R.id.userBox);
-        final EditText passInput = (EditText) findViewById(R.id.passBox);
-        final Button submitButton = (Button) findViewById(R.id.submitBox);
+        userInput = (EditText) findViewById(R.id.userBox);
+        passInput = (EditText) findViewById(R.id.passBox);
+        submitButton = (Button) findViewById(R.id.submitBox);
 
         //Caps the input
         InputFilter[] userFilterArray = new InputFilter[3];

@@ -1,11 +1,15 @@
 package com.example.wojtekswiderski.woahpaper;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.text.InputFilter;
 import android.text.Spanned;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -16,20 +20,47 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class SendActivity extends Activity {
+
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    public static final String EXTRA_MESSAGE = "message";
+    public static final String PROPERTY_REG_ID = "registration_id";
+    private static final String PROPERTY_APP_VERSION = "appVersion";
+
+    private String SENDER_ID = "553555318597";
+
+    static final String TAG = "WoahPaper";
+
+    private TextView userTitle;
+    private EditText recipInput;
+    private EditText wordInput;
+    private Button sendButton;
+
+    private Context context;
+    private GoogleCloudMessaging gcm;
+    private AtomicInteger msgId = new AtomicInteger();
+    private SharedPreferences;
+    private String regid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send);
+
+        context = getApplicationContext();
 
         //Enabling internet access for the app
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -40,10 +71,10 @@ public class SendActivity extends Activity {
         String userName = pastIntent.getStringExtra("user");
 
         //Objects for areas on the app
-        final TextView userTitle = (TextView) findViewById(R.id.userTitleBox);
-        final EditText recipInput = (EditText) findViewById(R.id.recipientBox);
-        final EditText wordInput = (EditText) findViewById(R.id.wordBox);
-        final Button sendButton = (Button) findViewById(R.id.sendButton);
+        userTitle = (TextView) findViewById(R.id.userTitleBox);
+        recipInput = (EditText) findViewById(R.id.recipientBox);
+        wordInput = (EditText) findViewById(R.id.wordBox);
+        sendButton = (Button) findViewById(R.id.sendButton);
 
         //Sets title to username
         userTitle.setText("HELLO " + userName.toUpperCase());
@@ -127,8 +158,33 @@ public class SendActivity extends Activity {
             }
         });
 
+        if(checkPlayServices()){
+            //Toast.makeText(getApplicationContext(), "This device is supported", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
+    // You need to do the Play Services APK check here too.
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkPlayServices();
+    }
+
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Log.i(TAG, "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
