@@ -14,7 +14,6 @@ import android.text.Spanned;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -117,9 +116,9 @@ public class SendActivity extends Activity {
         });
 
         //Button press
-        sendButton.setOnTouchListener(new View.OnTouchListener() {
+        sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
+            public void onClick(View view) {
                 InputMethodManager inputManager = (InputMethodManager)
                         getSystemService(view.getContext().INPUT_METHOD_SERVICE);
 
@@ -153,8 +152,6 @@ public class SendActivity extends Activity {
                     ey.printStackTrace();
                     Toast.makeText(view.getContext(), "Server Down", Toast.LENGTH_SHORT).show();
                 }
-
-                return false;
             }
         });
 

@@ -29,7 +29,7 @@
         <TextView
             style="@style/SpacerTheme"
             android:background="#CC0000"/>
-        <EditText
+        <!--<EditText
             style="@style/FormTheme"
             android:hint="@string/password_hint"
             android:background="#FF4444"
@@ -38,7 +38,7 @@
             android:maxLength="4"/>
         <TextView
             style="@style/SpacerTheme"
-            android:background="#CC0000"/>
+            android:background="#CC0000"/>-->
         <Button
             style="@style/ButtonTheme"
             android:id="@+id/submitBox"

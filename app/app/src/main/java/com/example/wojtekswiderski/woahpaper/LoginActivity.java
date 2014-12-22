@@ -3,6 +3,7 @@ package com.example.wojtekswiderski.woahpaper;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.view.Menu;
@@ -26,11 +27,12 @@ import java.net.URL;
 public class LoginActivity extends Activity {
 
     private EditText userInput;
-    private EditText passInput;
+    //private EditText passInput;
     private Button submitButton;
 
     private Context context;
     private int process;
+    private String UUID;
 
     @Override
     protected void onCreate(Bundle extra) {
@@ -39,6 +41,9 @@ public class LoginActivity extends Activity {
 
         context = getApplicationContext();
         process = 0;
+        TelephonyManager tManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+        UUID = tManager.getDeviceId();
+        Log.i("STUFF", UUID);
 
         //Enabling internet access for the app
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -46,7 +51,7 @@ public class LoginActivity extends Activity {
 
         //Creates objects for forms and button
         userInput = (EditText) findViewById(R.id.userBox);
-        passInput = (EditText) findViewById(R.id.passBox);
+        //passInput = (EditText) findViewById(R.id.passBox);
         submitButton = (Button) findViewById(R.id.submitBox);
 
         //Caps the input
@@ -76,25 +81,30 @@ public class LoginActivity extends Activity {
             }
         });
 
-        passInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        /*passInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
                 if(((EditText) view).getHint().equals("")) ((EditText) view).setHint(R.string.password_hint);
                 else ((EditText) view).setHint("");
             }
-        });
+        });*/
 
-        submitButton.setOnTouchListener(new View.OnTouchListener(){
+        submitButton.setOnClickListener(new View.OnClickListener(){
             @Override
-            public boolean onTouch(final View view, MotionEvent motionEvent) {
+            public void onClick(final View view) {
+
+                TelephonyManager tManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+                UUID = tManager.getDeviceId();
+                Log.i("STUFF", UUID);
+
                 InputMethodManager inputManager = (InputMethodManager)
                         getSystemService(view.getContext().INPUT_METHOD_SERVICE);
 
                 inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
                         InputMethodManager.HIDE_NOT_ALWAYS);
-                String user = userInput.getText().toString().toLowerCase();
-                String pass = passInput.getText().toString();
-                String url = "http://woahpaper.wojtechnology.com/user/" + user + "/" + pass;
+                /*String user = userInput.getText().toString().toLowerCase();
+                //String pass = passInput.getText().toString();
+                String url = "http://woahpaper.wojtechnology.com/user/" + user + "/";
                 try {
                     URL obj = new URL(url);
                     HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -126,8 +136,7 @@ public class LoginActivity extends Activity {
                 } catch (IOException ey) {
                     ey.printStackTrace();
                     Toast.makeText(view.getContext(), "Server Down", Toast.LENGTH_SHORT).show();
-                }
-                return false;
+                }*/
             }
         });
 
