@@ -32,8 +32,10 @@ public class LoginActivity extends Activity {
     //Variables holding important login values
     private Context context;
     private int process;
-    private String UUID;
     private String user;
+
+    //The UUID stores the unique identification number for each device
+    private String UUID;
 
     @Override
     protected void onCreate(Bundle extra) {
