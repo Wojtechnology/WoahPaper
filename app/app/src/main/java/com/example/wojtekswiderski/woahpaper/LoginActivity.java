@@ -8,11 +8,11 @@ import android.text.InputFilter;
 import android.text.Spanned;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.os.StrictMode;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.content.Intent;
 import android.util.Log;
@@ -26,35 +26,38 @@ import java.net.URL;
 
 public class LoginActivity extends Activity {
 
+    private TextView titleText;
     private EditText userInput;
     private Button submitButton;
 
-    //Variables holding important login values
     private Context context;
-    private int process;
-    private String user;
+    private String user = "";
+    private String uniqueID = "";
 
-    //The UUID stores the unique identification number for each device
-    private String UUID;
+    private final String TAG = "Woahpaper";
 
     @Override
     protected void onCreate(Bundle extra) {
         super.onCreate(extra);
         setContentView(R.layout.activity_login);
 
+        //Gets context object and unique device id (UUID)
         context = getApplicationContext();
-        process = 0;
         TelephonyManager tManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
-        UUID = tManager.getDeviceId();
-        Log.i("STUFF", UUID);
+        uniqueID = tManager.getDeviceId();
+        Log.e(TAG, uniqueID);
 
         //Enabling internet access for the app
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
+        //Checks if account already exists
+        checkLogin();
+
         //Creates objects for forms and button
         userInput = (EditText) findViewById(R.id.userBox);
         submitButton = (Button) findViewById(R.id.submitBox);
+        titleText = (TextView) findViewById(R.id.titleBox);
 
         //Caps the input
         InputFilter[] userFilterArray = new InputFilter[3];
@@ -83,71 +86,68 @@ public class LoginActivity extends Activity {
             }
         });
 
-        submitButton.setOnClickListener(new View.OnClickListener(){
+        submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
 
-                TelephonyManager tManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
-                UUID = tManager.getDeviceId();
-                Log.i("STUFF", UUID);
-
                 InputMethodManager inputManager = (InputMethodManager)
                         getSystemService(view.getContext().INPUT_METHOD_SERVICE);
-
                 inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
                         InputMethodManager.HIDE_NOT_ALWAYS);
+
                 user = userInput.getText().toString().toLowerCase();
-                String url = "http://woahpaper.wojtechnology.com/new/" + UUID + "/" + user;
-                try {
-                    URL obj = new URL(url);
-                    HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-                    con.setRequestMethod("GET");
-
-                    BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                    String inputLine;
-                    StringBuffer response = new StringBuffer();
-
-                    while ((inputLine = in.readLine()) != null) {
-                        response.append(inputLine);
-                    }
-                    in.close();
-
-                    if (response.toString().equals("correct password")) {
-                        loginAction(view, user);
-                    } else if (response.toString().equals("incorrect password")) {
-                        Toast.makeText(view.getContext(), "Wrong Password", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(view.getContext(), "Created User", Toast.LENGTH_SHORT).show();
-                        loginAction(view, user);
-                    }
-
-
-                } catch (MalformedURLException ex) {
-                    ex.printStackTrace();
-                    Toast.makeText(view.getContext(), "Wrong URL", Toast.LENGTH_SHORT).show();
-                } catch (IOException ey) {
-                    ey.printStackTrace();
-                    Toast.makeText(view.getContext(), "Server Down", Toast.LENGTH_SHORT).show();
-                }
+                Log.i(TAG, user);
             }
         });
 
     }
 
-    public void loginAction(View view, String user){
-        if(process == 0) {
-            process = 1;
-            try {
-                Intent i = new Intent(this, SendActivity.class);
-                i.putExtra("user", user);
-                startActivity(i);
-                Log.i("First", "Logged In");
-                finish();
-            } catch (Exception ex) {
-                Log.e("main", ex.toString());
-                process = 0;
+    public void loginAction() {
+        try {
+            Intent i = new Intent(this, SendActivity.class);
+            i.putExtra("user", user);
+            startActivity(i);
+            Log.i("First", "Logged In");
+            finish();
+        } catch (Exception ex) {
+            Log.e("main", ex.toString());
+        }
+    }
+
+    public void checkLogin(){
+        String url = "http://woahpaper.wojtechnology.com/login/" + uniqueID;
+        try {
+            URL obj = new URL(url);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+            con.setRequestMethod("GET");
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
             }
+            in.close();
+
+            if(response.equals("failure")){
+                Log.e(TAG, "Problem with Database");
+            }
+            else if(!response.toString().equals("no account")){
+                user = response.toString();
+                Log.i(TAG, user);
+                loginAction();
+            }else{
+                Log.e(TAG, "Did not find account");
+            }
+
+        } catch (MalformedURLException ex) {
+            ex.printStackTrace();
+            Toast.makeText(context, "Wrong URL", Toast.LENGTH_SHORT).show();
+        } catch (IOException ey) {
+            ey.printStackTrace();
+            Toast.makeText(context, "Server Down", Toast.LENGTH_SHORT).show();
         }
     }
 
