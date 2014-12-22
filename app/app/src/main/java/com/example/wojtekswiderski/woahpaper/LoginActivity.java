@@ -27,12 +27,13 @@ import java.net.URL;
 public class LoginActivity extends Activity {
 
     private EditText userInput;
-    //private EditText passInput;
     private Button submitButton;
 
+    //Variables holding important login values
     private Context context;
     private int process;
     private String UUID;
+    private String user;
 
     @Override
     protected void onCreate(Bundle extra) {
@@ -51,7 +52,6 @@ public class LoginActivity extends Activity {
 
         //Creates objects for forms and button
         userInput = (EditText) findViewById(R.id.userBox);
-        //passInput = (EditText) findViewById(R.id.passBox);
         submitButton = (Button) findViewById(R.id.submitBox);
 
         //Caps the input
@@ -81,14 +81,6 @@ public class LoginActivity extends Activity {
             }
         });
 
-        /*passInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if(((EditText) view).getHint().equals("")) ((EditText) view).setHint(R.string.password_hint);
-                else ((EditText) view).setHint("");
-            }
-        });*/
-
         submitButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(final View view) {
@@ -102,9 +94,8 @@ public class LoginActivity extends Activity {
 
                 inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
                         InputMethodManager.HIDE_NOT_ALWAYS);
-                /*String user = userInput.getText().toString().toLowerCase();
-                //String pass = passInput.getText().toString();
-                String url = "http://woahpaper.wojtechnology.com/user/" + user + "/";
+                user = userInput.getText().toString().toLowerCase();
+                String url = "http://woahpaper.wojtechnology.com/new/" + UUID + "/" + user;
                 try {
                     URL obj = new URL(url);
                     HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -136,7 +127,7 @@ public class LoginActivity extends Activity {
                 } catch (IOException ey) {
                     ey.printStackTrace();
                     Toast.makeText(view.getContext(), "Server Down", Toast.LENGTH_SHORT).show();
-                }*/
+                }
             }
         });
 
