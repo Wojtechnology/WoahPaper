@@ -97,6 +97,8 @@ public class LoginActivity extends Activity {
 
                 user = userInput.getText().toString().toLowerCase();
                 Log.i(TAG, user);
+
+                if(createNew()) changeUser();
             }
         });
 
@@ -107,14 +109,20 @@ public class LoginActivity extends Activity {
             Intent i = new Intent(this, SendActivity.class);
             i.putExtra("user", user);
             startActivity(i);
-            Log.i("First", "Logged In");
+            Log.i(TAG, "Logged in");
             finish();
+            return;
         } catch (Exception ex) {
-            Log.e("main", ex.toString());
+            ex.printStackTrace();
+            return;
         }
     }
 
-    public void checkLogin(){
+    public boolean checkLogin(){
+        if(uniqueID.equals("")){
+            Log.e(TAG, "No uniqueID");
+            return false;
+        }
         String url = "http://woahpaper.wojtechnology.com/login/" + uniqueID;
         try {
             URL obj = new URL(url);
@@ -133,13 +141,16 @@ public class LoginActivity extends Activity {
 
             if(response.equals("failure")){
                 Log.e(TAG, "Problem with Database");
+                return false;
             }
             else if(!response.toString().equals("no account")){
                 user = response.toString();
                 Log.i(TAG, user);
                 loginAction();
+                return true;
             }else{
                 Log.e(TAG, "Did not find account");
+                return false;
             }
 
         } catch (MalformedURLException ex) {
@@ -149,6 +160,108 @@ public class LoginActivity extends Activity {
             ey.printStackTrace();
             Toast.makeText(context, "Server Down", Toast.LENGTH_SHORT).show();
         }
+        return false;
+    }
+
+    //Returns whether this UUID already has an existing accountf
+    public boolean createNew(){
+        if(uniqueID.equals("")){
+            Log.e(TAG, "No uniqueID");
+            return false;
+        }
+        if(user.equals("")){
+            Log.e(TAG, "No user");
+            Toast.makeText(context, "Please enter a username", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        String url = "http://woahpaper.wojtechnology.com/new/" + uniqueID + "/" + user;
+        try {
+            URL obj = new URL(url);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+            con.setRequestMethod("GET");
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+            if (response.equals("failure")) {
+                Log.e(TAG, "Problem with database");
+                return false;
+            } else if (response.toString().equals("uuid taken")) {
+                Log.e(TAG, "Device already has account");
+                return true;
+            } else if(response.toString().equals("user taken")) {
+                Log.e(TAG, "Username is taken");
+                Toast.makeText(context, "Choose another username", Toast.LENGTH_SHORT).show();
+                return false;
+            } else {
+                Log.i(TAG, "Created account");
+                loginAction();
+                return false;
+            }
+        } catch (MalformedURLException ex) {
+            ex.printStackTrace();
+            Toast.makeText(context, "Wrong URL", Toast.LENGTH_SHORT).show();
+        } catch (IOException ey) {
+            ey.printStackTrace();
+            Toast.makeText(context, "Server down", Toast.LENGTH_SHORT).show();
+        }
+        return false;
+    }
+
+    public boolean changeUser(){
+
+        if(uniqueID.equals("")){
+            Log.e(TAG, "No uniqueID");
+            return false;
+        }
+        if(user.equals("")){
+            Log.e(TAG, "No user");
+            Toast.makeText(context, "Please enter a username", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        String url = "http://woahpaper.wojtechnology.com/updateUser/" + uniqueID + "/" + user;
+        try {
+            URL obj = new URL(url);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+            con.setRequestMethod("GET");
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+            if (response.equals("failure")) {
+                Log.e(TAG, "Problem with database");
+                return false;
+            } else if(response.toString().equals("user taken")) {
+                Log.e(TAG, "Username is taken");
+                Toast.makeText(context, "Choose another username", Toast.LENGTH_SHORT).show();
+                return false;
+            } else {
+                Log.i(TAG, "Changed username");
+                loginAction();
+                return false;
+            }
+        } catch (MalformedURLException ex) {
+            ex.printStackTrace();
+            Toast.makeText(context, "Wrong URL", Toast.LENGTH_SHORT).show();
+        } catch (IOException ey) {
+            ey.printStackTrace();
+            Toast.makeText(context, "Server down", Toast.LENGTH_SHORT).show();
+        }
+        return false;
     }
 
     @Override
