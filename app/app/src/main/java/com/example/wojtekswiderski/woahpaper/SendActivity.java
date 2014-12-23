@@ -39,7 +39,7 @@ public class SendActivity extends Activity {
     public static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "appVersion";
 
-    private String SENDER_ID = "553555318597";
+    private final String SENDER_ID = "553555318597";
 
     static final String TAG = "WoahPaper";
 
@@ -53,6 +53,10 @@ public class SendActivity extends Activity {
     private AtomicInteger msgId = new AtomicInteger();
     private SharedPreferences prefs;
     private String regid;
+    private String user;
+    private String uniqueID;
+    private String recip;
+    private String word;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +71,8 @@ public class SendActivity extends Activity {
 
         //Gets info from home page
         Intent pastIntent = getIntent();
-        String userName = pastIntent.getStringExtra("user");
+        user = pastIntent.getStringExtra("user");
+        uniqueID = pastIntent.getStringExtra("uuid");
 
         //Objects for areas on the app
         userTitle = (TextView) findViewById(R.id.userTitleBox);
@@ -76,7 +81,7 @@ public class SendActivity extends Activity {
         sendButton = (Button) findViewById(R.id.sendButton);
 
         //Sets title to username
-        userTitle.setText("HELLO " + userName.toUpperCase());
+        userTitle.setText("HELLO " + user.toUpperCase());
 
         //Caps the input
         InputFilter[] userFilterArray = new InputFilter[3];
@@ -93,6 +98,7 @@ public class SendActivity extends Activity {
                 return null;
             }
         };
+
         recipInput.setFilters(userFilterArray);
         wordInput.setFilters(userFilterArray);
 
@@ -125,33 +131,10 @@ public class SendActivity extends Activity {
                 inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
                         InputMethodManager.HIDE_NOT_ALWAYS);
 
-                String recip = recipInput.getText().toString().toLowerCase();
-                String word = wordInput.getText().toString();
-                String url = "http://woahpaper.wojtechnology.com/send/" + recip.toLowerCase() + "/" + word.toLowerCase();
-                try {
-                    URL obj = new URL(url);
-                    HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+                recip = recipInput.getText().toString().toLowerCase();
+                word = wordInput.getText().toString().toLowerCase();
 
-                    con.setRequestMethod("GET");
-
-                    BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                    String inputLine;
-                    StringBuffer response = new StringBuffer();
-
-                    while ((inputLine = in.readLine()) != null) {
-                        response.append(inputLine);
-                    }
-                    in.close();
-
-                    Toast.makeText(view.getContext(), response.toString(), Toast.LENGTH_SHORT).show();
-
-                } catch (MalformedURLException ex) {
-                    ex.printStackTrace();
-                    Toast.makeText(view.getContext(), "Wrong URL", Toast.LENGTH_SHORT).show();
-                } catch (IOException ey) {
-                    ey.printStackTrace();
-                    Toast.makeText(view.getContext(), "Server Down", Toast.LENGTH_SHORT).show();
-                }
+                sendWord();
             }
         });
 
@@ -175,6 +158,138 @@ public class SendActivity extends Activity {
     protected void onResume() {
         super.onResume();
         checkPlayServices();
+    }
+
+    public boolean sendWord(){
+        if(recip.equals("")){
+            Log.e(TAG, "No recipient");
+            Toast.makeText(context, "Choose a recipient", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(word.equals("")){
+            Log.e(TAG, "No word");
+            Toast.makeText(context, "Choose a word", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        String url = "http://woahpaper.wojtechnology.com/send/" + recip + "/" + word;
+        try {
+            URL obj = new URL(url);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+            con.setRequestMethod("GET");
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+            if (response.equals("failure")) {
+                Log.e(TAG, "Problem with database");
+                logoutAction();
+                return false;
+            } else if(response.toString().equals("regid taken")) {
+                Log.e(TAG, "Recipient does not exist");
+                Toast.makeText(context, "Recipient does not exist", Toast.LENGTH_SHORT).show();
+                return false;
+            } else {
+                Log.i(TAG, "Sent word");
+                afterSend();
+                return false;
+            }
+        } catch (MalformedURLException ex) {
+            ex.printStackTrace();
+            Toast.makeText(context, "Wrong url", Toast.LENGTH_SHORT).show();
+            logoutAction();
+        } catch (IOException ey) {
+            ey.printStackTrace();
+            Toast.makeText(context, "Server down", Toast.LENGTH_SHORT).show();
+            logoutAction();
+        }
+        return false;
+    }
+
+    public boolean changeRegID(){
+        if(uniqueID.equals("")){
+            Log.e(TAG, "No uniqueID");
+            return false;
+        }
+        if(regid.equals("")){
+            Log.e(TAG, "No regID");
+            return false;
+        }
+        String url = "http://woahpaper.wojtechnology.com/updateReg/" + uniqueID + "/" + regid;
+        try {
+            URL obj = new URL(url);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+            con.setRequestMethod("GET");
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+            if (response.equals("failure")) {
+                Log.e(TAG, "Problem with database");
+                logoutAction();
+                return false;
+            } else if(response.toString().equals("regid taken")) {
+                Log.e(TAG, "RegID is taken");
+                logoutAction();
+                return false;
+            } else if(response.toString().equals("no user")){
+                Log.e(TAG, "Failed to find user");
+                logoutAction();
+            } else {
+                Log.i(TAG, "Changed regID");
+                return false;
+            }
+        } catch (MalformedURLException ex) {
+            ex.printStackTrace();
+            Toast.makeText(context, "Wrong url", Toast.LENGTH_SHORT).show();
+            logoutAction();
+        } catch (IOException ey) {
+            ey.printStackTrace();
+            Toast.makeText(context, "Server down", Toast.LENGTH_SHORT).show();
+            logoutAction();
+        }
+        return false;
+    }
+
+    public void logoutAction() {
+        try {
+            Intent i = new Intent(this, LoginActivity.class);
+            startActivity(i);
+            Log.i(TAG, "Logged out");
+            finish();
+            return;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return;
+        }
+    }
+
+    public void afterSend() {
+        try {
+            Intent i = new Intent(this, SendActivity.class);
+            i.putExtra("user", user);
+            i.putExtra("uuid", uniqueID);
+            startActivity(i);
+            Log.i(TAG, "Done sending");
+            finish();
+            return;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return;
+        }
     }
 
     private boolean checkPlayServices() {
@@ -235,24 +350,11 @@ public class SendActivity extends Activity {
                     }
                     regid = gcm.register(SENDER_ID);
                     msg = "Device registered, registration ID=" + regid;
-
-                    // You should send the registration ID to your server over HTTP,
-                    // so it can use GCM/HTTP or CCS to send messages to your app.
-                    // The request to your server should be authenticated if your app
-                    // is using accounts.
                     sendRegistrationIdToBackend();
-
-                    // For this demo: we don't need to send it because the device
-                    // will send upstream messages to a server that echo back the
-                    // message using the 'from' address in the message.
-
-                    // Persist the regID - no need to register again.
                     storeRegistrationId(context, regid);
                 } catch (IOException ex) {
                     msg = "Error :" + ex.getMessage();
-                    // If there is an error, don't just keep trying to register.
-                    // Require the user to click a button again, or perform
-                    // exponential back-off.
+                    logoutAction();
                 }
                 return msg;
             }
@@ -265,7 +367,8 @@ public class SendActivity extends Activity {
     }
 
     private void sendRegistrationIdToBackend() {
-        Log.i(TAG, "Send registration to backend.");
+        changeRegID();
+        Log.i(TAG, "Send registration to backend");
     }
 
     private void storeRegistrationId(Context context, String regId){

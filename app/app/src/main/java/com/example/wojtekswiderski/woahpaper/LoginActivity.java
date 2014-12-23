@@ -29,6 +29,7 @@ public class LoginActivity extends Activity {
     private TextView titleText;
     private EditText userInput;
     private Button submitButton;
+    private Button retryButton;
 
     private Context context;
     private String user = "";
@@ -58,6 +59,7 @@ public class LoginActivity extends Activity {
         userInput = (EditText) findViewById(R.id.userBox);
         submitButton = (Button) findViewById(R.id.submitBox);
         titleText = (TextView) findViewById(R.id.titleBox);
+        retryButton = (Button) findViewById(R.id.retryBox);
 
         //Caps the input
         InputFilter[] userFilterArray = new InputFilter[3];
@@ -102,6 +104,17 @@ public class LoginActivity extends Activity {
             }
         });
 
+        retryButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(final View view) {
+                InputMethodManager inputManager = (InputMethodManager)
+                        getSystemService(view.getContext().INPUT_METHOD_SERVICE);
+                inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+                        InputMethodManager.HIDE_NOT_ALWAYS);
+                checkLogin();
+            }
+        });
+
     }
 
     public void loginAction() {
@@ -141,7 +154,7 @@ public class LoginActivity extends Activity {
             in.close();
 
             if(response.equals("failure")){
-                Log.e(TAG, "Problem with Database");
+                Log.e(TAG, "Problem with database");
                 return false;
             }
             else if(!response.toString().equals("no account")){
@@ -156,10 +169,10 @@ public class LoginActivity extends Activity {
 
         } catch (MalformedURLException ex) {
             ex.printStackTrace();
-            Toast.makeText(context, "Wrong URL", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Wrong url", Toast.LENGTH_SHORT).show();
         } catch (IOException ey) {
             ey.printStackTrace();
-            Toast.makeText(context, "Server Down", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Server down", Toast.LENGTH_SHORT).show();
         }
         return false;
     }
@@ -208,7 +221,7 @@ public class LoginActivity extends Activity {
             }
         } catch (MalformedURLException ex) {
             ex.printStackTrace();
-            Toast.makeText(context, "Wrong URL", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Wrong url", Toast.LENGTH_SHORT).show();
         } catch (IOException ey) {
             ey.printStackTrace();
             Toast.makeText(context, "Server down", Toast.LENGTH_SHORT).show();
@@ -257,7 +270,7 @@ public class LoginActivity extends Activity {
             }
         } catch (MalformedURLException ex) {
             ex.printStackTrace();
-            Toast.makeText(context, "Wrong URL", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Wrong url", Toast.LENGTH_SHORT).show();
         } catch (IOException ey) {
             ey.printStackTrace();
             Toast.makeText(context, "Server down", Toast.LENGTH_SHORT).show();

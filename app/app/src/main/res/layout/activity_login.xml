@@ -29,20 +29,18 @@
         <TextView
             style="@style/SpacerTheme"
             android:background="#CC0000"/>
-        <!--<EditText
-            style="@style/FormTheme"
-            android:hint="@string/password_hint"
-            android:background="#FF4444"
-            android:id="@+id/passBox"
-            android:inputType="numberPassword"
-            android:maxLength="4"/>
-        <TextView
-            style="@style/SpacerTheme"
-            android:background="#CC0000"/>-->
         <Button
             style="@style/ButtonTheme"
             android:id="@+id/submitBox"
             android:text="@string/submit_button"
+            android:background="@drawable/buttonblue"/>
+        <TextView
+            style="@style/SpacerTheme"
+            android:background="#0099CC"/>
+        <Button
+            style="@style/ButtonTheme"
+            android:id="@+id/retryBox"
+            android:text="@string/login_botton"
             android:background="@drawable/buttonblue"/>
         <TextView
             style="@style/SpacerTheme"
