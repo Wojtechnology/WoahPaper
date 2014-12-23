@@ -108,6 +108,7 @@ public class LoginActivity extends Activity {
         try {
             Intent i = new Intent(this, SendActivity.class);
             i.putExtra("user", user);
+            i.putExtra("uuid", uniqueID);
             startActivity(i);
             Log.i(TAG, "Logged in");
             finish();
@@ -163,7 +164,7 @@ public class LoginActivity extends Activity {
         return false;
     }
 
-    //Returns whether this UUID already has an existing accountf
+    //Returns whether this UUID already has an existing account
     public boolean createNew(){
         if(uniqueID.equals("")){
             Log.e(TAG, "No uniqueID");
