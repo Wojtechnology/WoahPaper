@@ -193,7 +193,7 @@ public class LoginActivity extends Activity {
             URL obj = new URL(url);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
-            con.setRequestMethod("GET");
+            con.setRequestMethod("POST");
 
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String inputLine;
@@ -245,7 +245,7 @@ public class LoginActivity extends Activity {
             URL obj = new URL(url);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
-            con.setRequestMethod("GET");
+            con.setRequestMethod("PUT");
 
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String inputLine;

@@ -191,7 +191,7 @@ public class SendActivity extends Activity {
                 Log.e(TAG, "Problem with database");
                 logoutAction();
                 return false;
-            } else if(response.toString().equals("regid taken")) {
+            } else if(response.toString().equals("no user")) {
                 Log.e(TAG, "Recipient does not exist");
                 Toast.makeText(context, "Recipient does not exist", Toast.LENGTH_SHORT).show();
                 return false;
@@ -226,7 +226,7 @@ public class SendActivity extends Activity {
             URL obj = new URL(url);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
-            con.setRequestMethod("GET");
+            con.setRequestMethod("PUT");
 
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String inputLine;
