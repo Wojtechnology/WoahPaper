@@ -46,7 +46,7 @@ public class LoginActivity extends Activity {
         context = getApplicationContext();
         TelephonyManager tManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
         uniqueID = tManager.getDeviceId();
-        Log.e(TAG, uniqueID);
+        Log.i(TAG, uniqueID);
 
         //Enabling internet access for the app
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();

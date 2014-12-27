@@ -30,6 +30,17 @@ package com.example.wojtekswiderski.woahpaper;
  import android.os.SystemClock;
  import android.support.v4.app.NotificationCompat;
  import android.util.Log;
+ import android.widget.Toast;
+
+ import org.json.JSONException;
+ import org.json.JSONObject;
+
+ import java.io.BufferedReader;
+ import java.io.IOException;
+ import java.io.InputStreamReader;
+ import java.net.HttpURLConnection;
+ import java.net.MalformedURLException;
+ import java.net.URL;
 
 /**
  * This {@code IntentService} does the actual handling of the GCM message.
@@ -49,6 +60,7 @@ public class GcmIntentService extends IntentService {
     public static final String TAG = "Woahpaper";
     public String word;
     public String sender;
+    public final int MAXRESULTS = 100;
 
     @Override
     protected void onHandleIntent(Intent intent) {
@@ -71,9 +83,17 @@ public class GcmIntentService extends IntentService {
                 sendNotification("Send error: " + extras.toString());
             } else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType)) {
                 sendNotification("Deleted messages on server: " + extras.toString());
-                // If it's a regular GCM message, do some work.
             } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
-                // Post notification of received message.
+
+                int results = numberResults();
+
+                if(results > MAXRESULTS){
+                    int start = (int) (Math.random() * 100);
+                    setWallPaper(start);
+                }else{
+
+                }
+
                 sendNotification("Received " + word.substring(0,1).toUpperCase() + word.substring(1) + " from " + sender.substring(0,1).toUpperCase() + sender.substring(1));
                 Log.i(TAG, "Received: " + extras.toString());
             }
@@ -98,5 +118,85 @@ public class GcmIntentService extends IntentService {
                         .setContentText(msg);
 
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+    }
+
+    public int numberResults(){
+        if(word.isEmpty()){
+            Log.e(TAG, "No word");
+            return 0;
+        }
+        int numResults;
+        String url = "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&rsz=1&q=" + word;
+        try {
+            URL obj = new URL(url);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+            con.setRequestMethod("GET");
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+            JSONObject deliverable;
+
+            try{
+                deliverable = new JSONObject(response.toString());
+                numResults = Integer.parseInt(deliverable.getJSONObject("responseData").getJSONObject("cursor").getString("estimatedResultCount"));
+                Log.i(TAG, "Number of results: " + numResults);
+                return numResults;
+            }catch(JSONException ex) {
+                Log.e(TAG, "Could not convert to object");
+                ex.printStackTrace();
+            }
+        } catch (MalformedURLException ex) {
+            ex.printStackTrace();
+            Log.e(TAG, "Wrong url");
+        } catch (IOException ey) {
+            ey.printStackTrace();
+            Log.e(TAG, "Server down");
+        }
+        return 0;
+    }
+    public boolean setWallPaper(int start){
+        String url = "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&rsz=1&q=" + word + "&start=" + start;
+        String imageUrl;
+        try {
+            URL obj = new URL(url);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+            con.setRequestMethod("GET");
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+            JSONObject deliverable;
+
+            try{
+                deliverable = new JSONObject(response.toString());
+                imageUrl = deliverable.getJSONObject("responseData").getJSONArray("results").getJSONObject(0).getString("url");
+                Log.i(TAG, imageUrl);
+            }catch(JSONException ex) {
+                Log.e(TAG, "Could not convert to object");
+                ex.printStackTrace();
+            }
+        } catch (MalformedURLException ex) {
+            ex.printStackTrace();
+            Log.e(TAG, "Wrong url");
+        } catch (IOException ey) {
+            ey.printStackTrace();
+            Log.e(TAG, "Server down");
+        }
+        return false;
     }
 }
