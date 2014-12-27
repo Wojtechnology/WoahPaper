@@ -46,7 +46,9 @@ public class GcmIntentService extends IntentService {
     public GcmIntentService() {
         super("GcmIntentService");
     }
-    public static final String TAG = "GCM Demo";
+    public static final String TAG = "Woahpaper";
+    public String word;
+    public String sender;
 
     @Override
     protected void onHandleIntent(Intent intent) {
@@ -55,6 +57,9 @@ public class GcmIntentService extends IntentService {
         // The getMessageType() intent parameter must be the intent you received
         // in your BroadcastReceiver.
         String messageType = gcm.getMessageType(intent);
+
+        word = extras.get("word").toString();
+        sender = extras.get("sender").toString();
 
         if (!extras.isEmpty()) {  // has effect of unparcelling Bundle
             /*
@@ -79,7 +84,7 @@ public class GcmIntentService extends IntentService {
                 }
                 Log.i(TAG, "Completed work @ " + SystemClock.elapsedRealtime());
                 // Post notification of received message.
-                sendNotification("Received: " + extras.toString());
+                sendNotification("Received " + word.substring(0,1).toUpperCase() + word.substring(1) + " from " + sender.substring(0,1).toUpperCase() + sender.substring(1));
                 Log.i(TAG, "Received: " + extras.toString());
             }
         }
@@ -100,7 +105,7 @@ public class GcmIntentService extends IntentService {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.wp_logo)
-                        .setContentTitle("GCM Notification")
+                        .setContentTitle("WoahPaper")
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(msg))
                         .setContentText(msg);

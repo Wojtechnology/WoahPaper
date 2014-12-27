@@ -171,7 +171,7 @@ public class SendActivity extends Activity {
             Toast.makeText(context, "Choose a word", Toast.LENGTH_SHORT).show();
             return false;
         }
-        String url = "http://woahpaper.wojtechnology.com/send/" + recip + "/" + word;
+        String url = "http://woahpaper.wojtechnology.com/send/" + recip + "/" + word + "/" + user;
         try {
             URL obj = new URL(url);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
