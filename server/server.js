@@ -2,7 +2,8 @@
 var application_root = __dirname,
 	express = require( 'express' ), //Web framework
 	path = require( 'path' ), //Utilities for dealing with file paths
-	mongoose = require( 'mongoose' ); //MongoDB integration
+	mongoose = require( 'mongoose' ), //MongoDB integration
+	http = require( 'http' );
 
 //Add database
 mongoose.connect('mongodb://localhost/woah');
@@ -35,7 +36,7 @@ app.listen( port, function() {
 	console.log( 'Express server listening on port %d in %s mode', port, app.settings.env );
 });
 
-app.get('/new/:uuid/:username', function(req, res){
+app.post('/new/:uuid/:username', function(req, res){
 	var me;
 	res.setHeader('Content-Type', 'application/json');
 	user.findOne({'uuid' : req.params.uuid}, function(err, userFound){
@@ -85,7 +86,7 @@ app.get('/login/:uuid', function(req, res){
 	});
 });
 
-app.get('/updateUser/:uuid/:username', function(req, res){
+app.put('/updateUser/:uuid/:username', function(req, res){
 	var me;
 	res.setHeader('Content-Type', 'application/json');
 	user.findOne({'username' : req.params.username}, function(err, userFound){
@@ -116,7 +117,7 @@ app.get('/updateUser/:uuid/:username', function(req, res){
 	});
 });
 
-app.get('/updateReg/:uuid/:regid', function(req, res){
+app.put('/updateReg/:uuid/:regid', function(req, res){
 	var me;
 	res.setHeader('Content-Type', 'application/json');
 	user.findOne({'regid' : req.params.regid}, function(err, userFound){
@@ -150,8 +151,11 @@ app.get('/updateReg/:uuid/:regid', function(req, res){
 	});
 });
 
-app.get('/send/:username/:word', function(req, res){
+app.get('/send/:username/:word/:sender', function(req, res){
 	var me;
+	var regid;
+	var sender = req.params.sender;
+	var word = req.params.word;
 	res.setHeader('Content-Type', 'application/json');
 	user.findOne({'username' : req.params.username}, function(err, userFound){
 		if(err){
@@ -159,9 +163,25 @@ app.get('/send/:username/:word', function(req, res){
 			return console.error(err);
 		}
 		me = userFound;
-		if(!me || me.regid === ""){
-			res.end("no user")
+		var regid;
+		var client;
+		var request;
+		if(!me){
+			res.end("no user");
+		}else if(me.regid === ""){
+			res.end("no user");
 		}else{
+			regid = me.regid;	
+			client = http.createClient(80, 'android.googleapis.com');
+			request = client.request('POST', '/gcm/send', {'Host':'android.googleapis.com', 'Content-Type':'application/json',
+				'Authorization':'key=AIzaSyCfLedk_ZkGbcr3-hLX9nVGTM8h2HLJ1ag'});
+			request.write(JSON.stringify({"registration_ids": [ regid ], "data":{"word":word, "sender":sender}}));
+			request.end();
+			request.on('response', function(response){
+				response.on('data', function(chunk){
+					console.log("BODY: " + chunk);
+				});
+			});
 			res.end("success");
 		}
 	});
