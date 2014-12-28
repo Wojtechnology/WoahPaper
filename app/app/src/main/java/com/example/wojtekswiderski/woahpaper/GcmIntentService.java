@@ -171,27 +171,11 @@ public class GcmIntentService extends IntentService {
         return 0;
     }
     public boolean setWallPaper(int start){
-        String size;
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         int height = displayMetrics.heightPixels;
         int width = displayMetrics.widthPixels;
-        int minDimension;
 
-        if(height >= width){
-            minDimension = width;
-        }else{
-            minDimension = height;
-        }
-
-        if(minDimension >= 720){
-            size = "huge";
-        }else{
-            size = "xxlarge";
-        }
-
-        Log.i(TAG, size);
-
-        String url = "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&rsz=1&q=" + word + "&start=" + start + "&imgsz=" + size;
+        String url = "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&rsz=1&q=" + word + "&start=" + start;
         String imageUrl;
         try {
             URL obj = new URL(url);
