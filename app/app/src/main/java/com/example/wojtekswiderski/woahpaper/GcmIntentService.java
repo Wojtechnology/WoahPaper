@@ -23,18 +23,16 @@ package com.example.wojtekswiderski.woahpaper;
 
  import android.app.IntentService;
  import android.app.NotificationManager;
- import android.app.PendingIntent;
+ import android.app.WallpaperManager;
  import android.content.Context;
  import android.content.Intent;
+ import android.graphics.Bitmap;
+ import android.graphics.BitmapFactory;
  import android.os.Bundle;
- import android.os.SystemClock;
  import android.support.v4.app.NotificationCompat;
  import android.util.Log;
- import android.widget.Toast;
-
  import org.json.JSONException;
  import org.json.JSONObject;
-
  import java.io.BufferedReader;
  import java.io.IOException;
  import java.io.InputStreamReader;
@@ -88,10 +86,17 @@ public class GcmIntentService extends IntentService {
                 int results = numberResults();
 
                 if(results > MAXRESULTS){
-                    int start = (int) (Math.random() * 100);
-                    setWallPaper(start);
+                    int start;
+                    int i = 0;
+                    do{
+                        start = (int) (Math.random() * 100);
+                        i++;
+                    }while(setWallPaper(start) && i <= 10);
                 }else{
-
+                    int i = 0;
+                    do{
+                        i++;
+                    }while(setWallPaper(i) && i <= 10);
                 }
 
                 sendNotification("Received " + word.substring(0,1).toUpperCase() + word.substring(1) + " from " + sender.substring(0,1).toUpperCase() + sender.substring(1));
@@ -186,16 +191,22 @@ public class GcmIntentService extends IntentService {
                 deliverable = new JSONObject(response.toString());
                 imageUrl = deliverable.getJSONObject("responseData").getJSONArray("results").getJSONObject(0).getString("url");
                 Log.i(TAG, imageUrl);
+                URL imageObj = new URL(imageUrl);
+                WallpaperManager wpm = WallpaperManager.getInstance(this);
+                wpm.setStream(imageObj.openStream());
             }catch(JSONException ex) {
                 Log.e(TAG, "Could not convert to object");
                 ex.printStackTrace();
+                return true;
             }
         } catch (MalformedURLException ex) {
             ex.printStackTrace();
             Log.e(TAG, "Wrong url");
+            return true;
         } catch (IOException ey) {
             ey.printStackTrace();
             Log.e(TAG, "Server down");
+            return true;
         }
         return false;
     }
