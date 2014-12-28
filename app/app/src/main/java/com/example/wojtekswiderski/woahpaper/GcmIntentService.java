@@ -212,9 +212,9 @@ public class GcmIntentService extends IntentService {
                 Log.i(TAG, "RatioX: " + ratioX + " RatioY: " + ratioY);
 
                 if(ratioX > ratioY){
-                    bmp = Bitmap.createScaledBitmap(bmp, (int) (((double) x) / ratioY), height, false);
+                    bmp = Bitmap.createScaledBitmap(bmp, (int) (((double) x) / ratioY) + 1, height, false);
                 }else{
-                    bmp = Bitmap.createScaledBitmap(bmp, width, (int) (((double) y) / ratioX), false);
+                    bmp = Bitmap.createScaledBitmap(bmp, width + 1, (int) (((double) y) / ratioX), false);
                 }
 
                 Log.i(TAG, "newX: " + bmp.getWidth() + " newY: " + bmp.getHeight());
@@ -224,7 +224,7 @@ public class GcmIntentService extends IntentService {
 
                 Canvas canvas = new Canvas(bmOverlay);
                 canvas.drawBitmap(bmpBack, new Matrix(), null);
-                canvas.drawBitmap(bmp, 0, 0, null);
+                canvas.drawBitmap(bmp, getWallpaperDesiredMinimumWidth() / 2 - bmp.getWidth() / 2, 0, null);
 
                 WallpaperManager wpm = WallpaperManager.getInstance(this);
                 wpm.setBitmap(bmOverlay);
