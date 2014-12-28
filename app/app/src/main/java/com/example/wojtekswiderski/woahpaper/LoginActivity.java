@@ -28,7 +28,7 @@ public class LoginActivity extends Activity {
 
     private TextView titleText;
     private EditText userInput;
-    private Button submitButton;
+    //private Button submitButton;
     private Button retryButton;
 
     private Context context;
@@ -57,7 +57,7 @@ public class LoginActivity extends Activity {
 
         //Creates objects for forms and button
         userInput = (EditText) findViewById(R.id.userBox);
-        submitButton = (Button) findViewById(R.id.submitBox);
+        //submitButton = (Button) findViewById(R.id.submitBox);
         titleText = (TextView) findViewById(R.id.titleBox);
         retryButton = (Button) findViewById(R.id.retryBox);
 
@@ -88,7 +88,7 @@ public class LoginActivity extends Activity {
             }
         });
 
-        submitButton.setOnClickListener(new View.OnClickListener() {
+        /*submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
 
@@ -102,7 +102,7 @@ public class LoginActivity extends Activity {
 
                 if(createNew()) changeUser();
             }
-        });
+        });*/
 
         retryButton.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -111,7 +111,15 @@ public class LoginActivity extends Activity {
                         getSystemService(view.getContext().INPUT_METHOD_SERVICE);
                 inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
                         InputMethodManager.HIDE_NOT_ALWAYS);
-                checkLogin();
+
+                user = userInput.getText().toString().toLowerCase();
+
+                if(user.equals("")){
+                    checkLogin();
+                }else {
+                    Log.i(TAG, user);
+                    if(createNew()) changeUser();
+                }
             }
         });
 
@@ -164,6 +172,7 @@ public class LoginActivity extends Activity {
                 return true;
             }else{
                 Log.e(TAG, "Did not find account");
+                Toast.makeText(context, "Please enter a username", Toast.LENGTH_SHORT).show();
                 return false;
             }
 
@@ -210,7 +219,7 @@ public class LoginActivity extends Activity {
             } else if (response.toString().equals("uuid taken")) {
                 Log.e(TAG, "Device already has account");
                 return true;
-            } else if(response.toString().equals("user taken")) {
+            } else if(response.toString().equals("username taken")) {
                 Log.e(TAG, "Username is taken");
                 Toast.makeText(context, "Choose another username", Toast.LENGTH_SHORT).show();
                 return false;

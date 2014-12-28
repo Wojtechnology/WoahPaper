@@ -4,7 +4,7 @@ finish();
     <string name="app_name">WoahPaper</string>
     <string name="action_settings">Settings</string>
     <string name="header_name">WOAHPAPER</string>
-    <string name="username_hint">...YOUR NAME...</string>
+    <string name="username_hint">...NEW NAME...</string>
     <string name="login_botton">LOGIN</string>
     <string name="submit_button">CHANGE NAME</string>
     <string name="send_botton">SEND WOAHPAPER</string>

@@ -29,14 +29,14 @@
         <TextView
             style="@style/SpacerTheme"
             android:background="#CC0000"/>
-        <Button
+        <!--<Button
             style="@style/ButtonTheme"
             android:id="@+id/submitBox"
             android:text="@string/submit_button"
             android:background="@drawable/buttonblue"/>
         <TextView
             style="@style/SpacerTheme"
-            android:background="#0099CC"/>
+            android:background="#0099CC"/>-->
         <Button
             style="@style/ButtonTheme"
             android:id="@+id/retryBox"
