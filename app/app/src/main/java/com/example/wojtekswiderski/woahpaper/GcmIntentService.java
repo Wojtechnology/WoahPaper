@@ -28,8 +28,11 @@ package com.example.wojtekswiderski.woahpaper;
  import android.content.Intent;
  import android.graphics.Bitmap;
  import android.graphics.BitmapFactory;
+ import android.graphics.Canvas;
+ import android.graphics.Matrix;
  import android.os.Bundle;
  import android.support.v4.app.NotificationCompat;
+ import android.util.DisplayMetrics;
  import android.util.Log;
  import org.json.JSONException;
  import org.json.JSONObject;
@@ -58,7 +61,7 @@ public class GcmIntentService extends IntentService {
     public static final String TAG = "Woahpaper";
     public String word;
     public String sender;
-    public final int MAXRESULTS = 100;
+    public final int MAXRESULTS = 64;
 
     @Override
     protected void onHandleIntent(Intent intent) {
@@ -89,7 +92,7 @@ public class GcmIntentService extends IntentService {
                     int start;
                     int i = 0;
                     do{
-                        start = (int) (Math.random() * 100);
+                        start = (int) (Math.random() * MAXRESULTS);
                         i++;
                     }while(setWallPaper(start) && i <= 10);
                 }else{
@@ -168,7 +171,27 @@ public class GcmIntentService extends IntentService {
         return 0;
     }
     public boolean setWallPaper(int start){
-        String url = "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&rsz=1&q=" + word + "&start=" + start;
+        String size;
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        int height = displayMetrics.heightPixels;
+        int width = displayMetrics.widthPixels;
+        int minDimension;
+
+        if(height >= width){
+            minDimension = width;
+        }else{
+            minDimension = height;
+        }
+
+        if(minDimension >= 720){
+            size = "huge";
+        }else{
+            size = "xxlarge";
+        }
+
+        Log.i(TAG, size);
+
+        String url = "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&rsz=1&q=" + word + "&start=" + start + "&imgsz=" + size;
         String imageUrl;
         try {
             URL obj = new URL(url);
@@ -192,8 +215,35 @@ public class GcmIntentService extends IntentService {
                 imageUrl = deliverable.getJSONObject("responseData").getJSONArray("results").getJSONObject(0).getString("url");
                 Log.i(TAG, imageUrl);
                 URL imageObj = new URL(imageUrl);
+
+                Bitmap bmp = BitmapFactory.decodeStream(imageObj.openConnection().getInputStream());
+
+                int x = bmp.getWidth();
+                int y = bmp.getHeight();
+                double ratioX = ((double) x) / ((double) width);
+                double ratioY = ((double) y) / ((double) height);
+
+                Log.i(TAG, "Width: " + width + " Height: " + height);
+                Log.i(TAG, "X: " + x + " Y: " + y);
+                Log.i(TAG, "RatioX: " + ratioX + " RatioY: " + ratioY);
+
+                if(ratioX > ratioY){
+                    bmp = Bitmap.createScaledBitmap(bmp, (int) (((double) x) / ratioY), height, false);
+                }else{
+                    bmp = Bitmap.createScaledBitmap(bmp, width, (int) (((double) y) / ratioX), false);
+                }
+
+                Log.i(TAG, "newX: " + bmp.getWidth() + " newY: " + bmp.getHeight());
+
+                Bitmap bmpBack = Bitmap.createBitmap(getWallpaperDesiredMinimumWidth(), getWallpaperDesiredMinimumHeight(), Bitmap.Config.ARGB_8888);
+                Bitmap bmOverlay = Bitmap.createBitmap(bmpBack.getWidth(), bmpBack.getHeight(), bmpBack.getConfig());
+
+                Canvas canvas = new Canvas(bmOverlay);
+                canvas.drawBitmap(bmpBack, new Matrix(), null);
+                canvas.drawBitmap(bmp, 0, 0, null);
+
                 WallpaperManager wpm = WallpaperManager.getInstance(this);
-                wpm.setStream(imageObj.openStream());
+                wpm.setBitmap(bmOverlay);
             }catch(JSONException ex) {
                 Log.e(TAG, "Could not convert to object");
                 ex.printStackTrace();
